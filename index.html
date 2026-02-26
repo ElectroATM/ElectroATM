@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electro ATM - Projects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        
+        /* Glitch effect */
+        .glitch {
+            position: relative;
+        }
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff003c;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00fff9, 2px 2px #ff003c;
+            animation: glitch-anim2 1s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(31px, 9999px, 94px, 0); }
+            20% { clip: rect(58px, 9999px, 14px, 0); }
+            40% { clip: rect(11px, 9999px, 78px, 0); }
+            60% { clip: rect(89px, 9999px, 22px, 0); }
+            80% { clip: rect(2px, 9999px, 96px, 0); }
+            100% { clip: rect(67px, 9999px, 43px, 0); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 99px, 0); }
+            20% { clip: rect(12px, 9999px, 33px, 0); }
+            40% { clip: rect(88px, 9999px, 11px, 0); }
+            60% { clip: rect(44px, 9999px, 66px, 0); }
+            80% { clip: rect(23px, 9999px, 77px, 0); }
+            100% { clip: rect(55px, 9999px, 22px, 0); }
+        }
+        
+        .project-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 249, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 249, 0.2);
+            border-color: #00fff9;
+        }
+        
+        .btn-neon {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-decoration: none;
+            border: 1px solid;
+        }
+        .btn-neon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px currentColor;
+        }
+        
+        .lang-btn {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 0.25rem 1rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .lang-btn.active {
+            background: #00fff9;
+            color: #0a0a0a;
+            box-shadow: 0 0 20px #00fff9;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 1rem;
+        }
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .projects-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav style="position: fixed; width: 100%; z-index: 50; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,255,249,0.2);">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 3rem; height: 3rem; background: linear-gradient(135deg, #00fff9, #ff003c); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.5rem; box-shadow: 0 0 20px rgba(0,255,249,0.5);">
+                    A
+                </div>
+                <div>
+                    <h1 class="font-orbitron glitch" data-text="ELECTRO ATM" style="font-size: 1.25rem; font-weight: 700; letter-spacing: 0.1em;">ELECTRO ATM</h1>
+                    <p style="font-size: 0.75rem; color: #00fff9; letter-spacing: 0.2em;">ELECTRONICS • TUTORIALS • MAKING</p>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 9999px; padding: 0.25rem;">
+                <button onclick="setLanguage('fr')" id="btn-fr" class="lang-btn active">FR</button>
+                <button onclick="setLanguage('en')" id="btn-en" class="lang-btn">EN</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header style="position: relative; padding-top: 10rem; padding-bottom: 5rem; overflow: hidden;">
+        <div class="bg-orb" style="width: 20rem; height: 20rem; background: #00fff9; top: 5rem; left: 5%;"></div>
+        <div class="bg-orb" style="width: 20rem; height: 20rem; background: #ff003c; top: 8rem; right: 5%;"></div>
+        
+        <div class="container" style="text-align: center; position: relative; z-index: 10;">
+            <h2 class="font-orbitron" style="font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; margin-bottom: 1.5rem; background: linear-gradient(90deg, #00fff9, #ff003c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                <span data-fr="MES PROJETS ÉLECTRONIQUES" data-en="MY ELECTRONICS PROJECTS">MES PROJETS ÉLECTRONIQUES</span>
+            </h2>
+            <p style="font-size: clamp(1rem, 2vw, 1.5rem); color: #a0a0a0; margin-bottom: 2rem; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                <span data-fr="Découvrez mes créations électroniques, schémas détaillés et tutoriels complets sur ma chaîne YouTube Electro ATM" data-en="Discover my electronic creations, detailed schematics and complete tutorials on my Electro ATM YouTube channel">Découvrez mes créations électroniques, schémas détaillés et tutoriels complets sur ma chaîne YouTube Electro ATM</span>
+            </p>
+            <a href="https://www.youtube.com/@ElectroATM-k4z" target="_blank" 
+               style="display: inline-flex; align-items: center; gap: 0.75rem; background: #ff0000; color: white; padding: 1rem 2.5rem; border-radius: 9999px; font-weight: 700; font-size: 1.125rem; text-decoration: none; transition: all 0.3s; box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);">
+                <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                <span data-fr="VOIR MA CHAÎNE YOUTUBE" data-en="WATCH MY YOUTUBE CHANNEL">VOIR MA CHAÎNE YOUTUBE</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Projects Section -->
+    <main class="container" style="padding-bottom: 5rem;">
+        <div id="projects-container" class="projects-grid">
+            <!-- Projects injected by JavaScript -->
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" class="modal" onclick="closeModal()">
+        <div style="background: linear-gradient(135deg, #1a1a2e, #0f0f23); border-radius: 1rem; max-width: 1000px; width: 100%; max-height: 90vh; overflow: hidden; border: 1px solid rgba(0,255,249,0.3); box-shadow: 0 25px 50px rgba(0,0,0,0.8);" onclick="event.stopPropagation()">
+            <div style="padding: 1.5rem; border-bottom: 1px solid rgba(0,255,249,0.2); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3);">
+                <h3 id="modal-title" class="font-orbitron" style="color: #00fff9; font-size: 1.5rem; font-weight: 700;"></h3>
+                <button onclick="closeModal()" style="background: none; border: none; color: #ff003c; font-size: 2.5rem; cursor: pointer; line-height: 1; transition: transform 0.3s;">&times;</button>
+            </div>
+            <div style="padding: 2rem; overflow: auto; max-height: 70vh; text-align: center;">
+                <img id="modal-image" src="" alt="Schematic" style="max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: rgba(0,0,0,0.8); border-top: 1px solid rgba(0,255,249,0.2); padding: 3rem 0; text-align: center; margin-top: 3rem;">
+        <div class="container">
+            <a href="https://www.youtube.com/@ElectroATM-k4z" target="_blank" style="color: #ff0000; display: inline-block; margin-bottom: 1.5rem; transition: all 0.3s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+                <svg width="40" height="40" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <p style="color: #666; font-size: 0.9rem;">
+                <span data-fr="© 2024 Electro ATM. Tous droits réservés." data-en="© 2024 Electro ATM. All rights reserved.">© 2024 Electro ATM. Tous droits réservés.</span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // CONFIGURATION - VOS PROJETS ELECTRO ATM
+        // ==========================================
+        
+        const CONFIG = {
+            youtubeChannel: "https://www.youtube.com/@ElectroATM-k4z",
+            
+            // REMPLACEZ "VIDEO_ID_X" PAR LES VRAIS ID DE VOS VIDÉOS YOUTUBE
+            // L'ID est la partie après "v=" dans l'URL : youtube.com/watch?v=XXXXXXXXXXX
+            projects: [
+                {
+                    id: 1,
+                    title: { fr: "Comment contrôler la vitesse d'un moteur à courant continu à l'aide d'un L298N et d'un potentiomètre", en: "How to Control DC Motor Speed Using L298N and Potentiometer" },
+                    description: { 
+                        fr: "Dans ce projet, je vous montre comment contrôler la vitesse d'un moteur CC à l'aide d'un potentiomètre et du pilote de moteur L298N (LN298) avec Arduino.", 
+                        en: "In this project, I show you how to control the speed of a DC motor using a potentiometer and the L298N (LN298) motor driver with Arduino." 
+                    },
+                    // REMPLACEZ PAR VOTRE ID YOUTUBE RÉEL
+                    image: "https://img.youtube.com/vi/Dn5fQA3ap0A/maxresdefault.jpg",
+                    youtubeUrl: "https://youtube.com/watch?v=Dn5fQA3ap0A",
+                    schematic: "schemas/projet1_schematic.png",
+                    downloadFile: "downloads/projet1_code.ino"
+                },
+                {
+                    id: 2,
+                    title: { fr: "Capteur de Température DHT11", en: "DHT11 Temperature Sensor" },
+                    description: { 
+                        fr: "Station météo simple avec capteur DHT11 et écran LCD 16x2. Affichage température et humidité.", 
+                        en: "Simple weather station with DHT11 sensor and 16x2 LCD. Temperature and humidity display." 
+                    },
+                    image: "https://img.youtube.com/vi/D6S7pqciqNU/maxresdefault.jpg",
+                    youtubeUrl: "https://youtube.com/watch?v=D6S7pqciqNU",
+                    schematic: "schemas/projet2_schematic.png",
+                    downloadFile: "downloads/projet2_dht11.zip"
+                },
+                {
+                    id: 3,
+                    title: { fr: "Contrôle de Moteur PAS à PAS", en: "Stepper Motor Control" },
+                    description: { 
+                        fr: "Contrôle précis de moteur pas à pas 28BYJ-48 avec driver ULN2003 et Arduino.", 
+                        en: "Precise control of 28BYJ-48 stepper motor with ULN2003 driver and Arduino." 
+                    },
+                    image: "https://img.youtube.com/vi/VIDEO_ID_3/maxresdefault.jpg",
+                    youtubeUrl: "https://youtube.com/watch?v=VIDEO_ID_3",
+                    schematic: "schemas/projet3_schematic.png",
+                    downloadFile: "downloads/projet3_stepper.pdf"
+                },
+                {
+                    id: 4,
+                    title: { fr: "Module Bluetooth HC-05", en: "Bluetooth HC-05 Module" },
+                    description: { 
+                        fr: "Communication sans fil entre smartphone et Arduino via module Bluetooth HC-05.", 
+                        en: "Wireless communication between smartphone and Arduino via HC-05 Bluetooth module." 
+                    },
+                    image: "https://img.youtube.com/vi/VIDEO_ID_4/maxresdefault.jpg",
+                    youtubeUrl: "https://youtube.com/watch?v=VIDEO_ID_4",
+                    schematic: "schemas/projet4_schematic.png",
+                    downloadFile: "downloads/projet4_bluetooth.ino"
+                },
+                {
+                    id: 5,
+                    title: { fr: "Capteur Ultrason HC-SR04", en: "Ultrasonic Sensor HC-SR04" },
+                    description: { 
+                        fr: "Télémètre à ultrasons pour mesure de distance. Application : radar de recul.", 
+                        en: "Ultrasonic rangefinder for distance measurement. Application: parking sensor." 
+                    },
+                    image: "https://img.youtube.com/vi/VIDEO_ID_5/maxresdefault.jpg",
+                    youtubeUrl: "https://youtube.com/watch?v=VIDEO_ID_5",
+                    schematic: "schemas/projet5_schematic.png",
+                    downloadFile: "downloads/projet5_ultrasonic.zip"
+                },
+                {
+                    id: 6,
+                    title: { fr: "Écran OLED 0.96\"", en: "OLED Display 0.96\"" },
+                    description: { 
+                        fr: "Interface graphique avec écran OLED I2C 128x64 pixels. Affichage texte et graphiques.", 
+                        en: "Graphical interface with I2C OLED 128x64 pixels screen. Text and graphics display." 
+                    },
+                    image: "https://img.youtube.com/vi/VIDEO_ID_6/maxresdefault.jpg",
+                    youtubeUrl: "https://youtube.com/watch?v=VIDEO_ID_6",
+                    schematic: "schemas/projet6_schematic.png",
+                    downloadFile: "downloads/projet6_oled.pdf"
+                }
+            ]
+        };
+
+        // ==========================================
+        // LOGIQUE DE L'APPLICATION
+        // ==========================================
+        
+        let currentLang = 'fr';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+            
+            document.querySelectorAll('[data-fr][data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${lang}`);
+            });
+            
+            renderProjects();
+        }
+
+        function renderProjects() {
+            const container = document.getElementById('projects-container');
+            
+            container.innerHTML = CONFIG.projects.map(project => `
+                <div class="project-card">
+                    <div style="position: relative; height: 220px; overflow: hidden; background: #000;">
+                        <img src="${project.image}" 
+                             alt="${project.title[currentLang]}" 
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;"
+                             onmouseover="this.style.transform='scale(1.1)'"
+                             onmouseout="this.style.transform='scale(1)'"
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22480%22 height=%22360%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22%3E%3Cstop offset=%220%25%22 style=%22stop-color:%2300fff9%22/%3E%3Cstop offset=%22100%25%22 style=%22stop-color:%23ff003c%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22url(%23g)%22 opacity=%220.2%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2300fff9%22 font-family=%22Orbitron%22 font-size=%2220%22 font-weight=%22bold%22%3E${encodeURIComponent(project.title[currentLang])}%3C/text%3E%3C/svg%3E'">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);"></div>
+                        <div style="position: absolute; bottom: 1rem; left: 1rem; right: 1rem;">
+                            <h3 class="font-orbitron" style="font-size: 1.3rem; font-weight: 700; color: #00fff9; text-shadow: 0 0 10px rgba(0,255,249,0.5);">${project.title[currentLang]}</h3>
+                        </div>
+                    </div>
+                    
+                    <div style="padding: 1.5rem;">
+                        <p style="color: #b0b0b0; margin-bottom: 1.5rem; line-height: 1.6; min-height: 3.5rem; font-size: 0.95rem;">
+                            ${project.description[currentLang]}
+                        </p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem;">
+                            <!-- YouTube Button -->
+                            <a href="${project.youtubeUrl}" target="_blank" 
+                               class="btn-neon" 
+                               style="background: rgba(255, 0, 0, 0.15); border-color: rgba(255, 0, 0, 0.6); color: #ff4444;">
+                                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                                <span style="font-size: 0.7rem; font-weight: 700; margin-top: 0.25rem;">YouTube</span>
+                            </a>
+                            
+                            <!-- Download Button -->
+                            <a href="${project.downloadFile}" download
+                               class="btn-neon" 
+                               style="background: rgba(0, 255, 249, 0.15); border-color: rgba(0, 255, 249, 0.6); color: #00fff9;">
+                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                <span style="font-size: 0.7rem; font-weight: 700; margin-top: 0.25rem;">${currentLang === 'fr' ? 'CODE' : 'CODE'}</span>
+                            </a>
+                            
+                            <!-- Schematic Button -->
+                            <button onclick="showSchematic('${project.schematic}', '${project.title[currentLang]}')"
+                                    class="btn-neon" 
+                                    style="background: rgba(255, 0, 60, 0.15); border-color: rgba(255, 0, 60, 0.6); color: #ff003c;">
+                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+                                <span style="font-size: 0.7rem; font-weight: 700; margin-top: 0.25rem;">${currentLang === 'fr' ? 'SCHÉMA' : 'DIAGRAM'}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showSchematic(imageSrc, title) {
+            const modal = document.getElementById('modal');
+            const modalImg = document.getElementById('modal-image');
+            const modalTitle = document.getElementById('modal-title');
+            
+            modalImg.src = imageSrc;
+            modalTitle.textContent = title + (currentLang === 'fr' ? ' - Schéma Électrique' : ' - Wiring Diagram');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        renderProjects();
+    </script>
+
+</body>
+</html>
