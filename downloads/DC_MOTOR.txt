@@ -1,0 +1,39 @@
+// Pins
+const int potPin = A0;
+const int enA = 9;   // PWM
+const int in1 = 8;
+const int in2 = 7;
+
+int potValue = 0;
+int motorSpeed = 0;
+
+void setup() {
+  pinMode(enA, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+
+  // Sens de rotation
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Lire le potentiomètre
+  potValue = analogRead(potPin);
+
+  // Mapper vers PWM (0–255)
+  motorSpeed = map(potValue, 0, 1023, 0, 255);
+
+  // Contrôle de la vitesse
+  analogWrite(enA, motorSpeed);
+
+  // Debug
+  Serial.print("Pot: ");
+  Serial.print(potValue);
+  Serial.print(" | Speed: ");
+  Serial.println(motorSpeed);
+
+  delay(10);
+}
